@@ -1,0 +1,162 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+
+framework:
+    #esi:             ~
+    #translator:      { fallback: "%locale%" }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: true
+    validation:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+        cookie_httponly: true
+    fragments:       ~
+    http_method_override: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+# Assetic Configuration
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: %kernel.debug%
+    #bundles:        [CmfCreateBundle]
+    #java: /usr/bin/java
+    filters:
+        cssrewrite: ~
+        less:
+            node: %node_path%
+            node_paths: [/usr/local/lib/node_modules, /usr/local/bin]
+            apply_to: "\.less$"
+
+# Doctrine Configuration (needed for Jackalope Doctrine DBAL)
+doctrine:
+    dbal:
+        #types:
+        #    json: Sonata\Doctrine\Types\JsonType
+        default_connection:   default
+        connections:
+            default:
+                driver:   %database_driver%
+                host:     %database_host%
+                port:     %database_port%
+                unix_socket: %database_socket%
+                dbname:   %database_name%
+                user:     %database_user%
+                password: %database_password%
+                charset:  UTF8
+                # if using pdo_sqlite as your database driver, add the path in parameters.yml
+                # e.g. database_path: %kernel.root_dir%/data/data.db3
+                # path:     %database_path%
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        auto_mapping: true
+
+# Doctrine PHPCR-ODM configuration
+doctrine_phpcr:
+    session:
+        backend: "%phpcr_backend%"
+        workspace: "%phpcr_workspace%"
+        username: "%phpcr_user%"
+        password: "%phpcr_password%"
+    odm:
+        auto_mapping: true
+        auto_generate_proxy_classes: "%kernel.debug%"
+
+# Jackalope Metadata and Node Cache services
+doctrine_cache:
+    providers:
+        phpcr_meta:
+            type: file_system
+        phpcr_nodes:
+            type: file_system
+
+# Cmf Configuration
+cmf_core:
+    persistence:
+        phpcr: true
+        # if you want another basepath
+        # basepath: /custom/basepath
+    publish_workflow: false
+
+# Cmf Routing Configuration
+cmf_routing:
+    chain:
+        routers_by_id:
+            cmf_routing.dynamic_router: 200
+            router.default: 100
+    dynamic:
+        templates_by_class:
+            Symfony\Cmf\Bundle\SimpleCmsBundle\Doctrine\Phpcr\Page: RhaCmsBundle:Page:index.html.twig
+
+# Menu Configuration
+knp_menu:
+    twig: true
+
+# mopa bootstrap Configuration
+mopa_bootstrap:
+    menu: ~  # enables twig helpers for menu
+    initializr:
+        meta:
+            title:        "Some Title"
+            description:  "This is test site"
+            keywords:     "keyword1,keyword 2"
+        #    author_name:  "this is me"
+        #    author_url:   "/human.txt"
+            nofollow:     false
+            noindex:      false
+        dns_prefetch:
+            - '//ajax.googleapis.com'
+        #google:
+        #    wt: 'xxx'
+        #    analytics: 'UA-xxxxxxx-xx'
+        #diagnostic_mode: true
+
+sonata_block:
+    default_contexts: [cms]
+
+# Cmf Create Configuration
+fos_rest:
+    view:
+        force_redirects:
+            html: true
+        formats:
+            json: true
+            xml: true
+        templating_formats:
+            html: true
+    allowed_methods_listener: true
+    access_denied_listener:
+        json: true
+    format_listener:
+        rules:
+            - { path: ^/, priorities: [ html, json, xml, css ], fallback_format: html, prefer_extension: false }
+
+cmf_create:
+    editor_base_path: /bundles/cmfcreate/vendor/ckeditor/
+    security:
+        # WARNING: REMOVE THIS FOR PRODUCTION SITES
+        # for demo purposes we are allowing anonymous inline editing
+        role: IS_AUTHENTICATED_ANONYMOUSLY
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }

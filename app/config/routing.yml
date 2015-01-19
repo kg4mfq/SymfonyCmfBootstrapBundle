@@ -1,0 +1,7 @@
+rha_cms:
+    resource: "@RhaCmsBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+_cmf_create:
+    resource: "@CmfCreateBundle/Resources/config/routing/rest.xml"
